@@ -1,104 +1,51 @@
 package org.example;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
+    private static Map<Integer, List<Integer>> moveMap = new HashMap<>();
+
+    static {
+        moveMap.put(0, List.of(4, 6));
+        moveMap.put(1, List.of(8, 6));
+        moveMap.put(2, List.of(7, 9));
+        moveMap.put(3, List.of(4, 8));
+        moveMap.put(4, List.of(3, 9, 0));
+        moveMap.put(5, List.of());  // No moves from 5
+        moveMap.put(6, List.of(2, 7, 0));
+        moveMap.put(7, List.of(2, 6));
+        moveMap.put(8, List.of(1, 3));
+        moveMap.put(9, List.of(2, 4));
+    }
+
+    public static int numberOfPossibleMovements(int position, int numberOfMoves) {
+        if (numberOfMoves == 0) {
+            return 1;
+        }
+
+        int totalMoves = 0;
+        for (int nextPosition : moveMap.get(position)) {
+            totalMoves += numberOfPossibleMovements(nextPosition, numberOfMoves - 1);
+        }
+
+        return totalMoves;
+    }
+
     public static void main(String[] args) {
-        printBoard(createBoard());
-        System.out.println(possibleMoves(1,2).size());
-
-    }
-
-    private static List<Integer> possibleMoves(int position, int intNumberOfMoves) {
-        List<Integer> coordinateList = new ArrayList<>();
-
-        if (intNumberOfMoves == 0) {
-            return coordinateList;
-        } else {
-            switch (position) {
-                case 1 -> {
-                    coordinateList.add(8);
-                    coordinateList.add(6);
-                }
-                case 2 -> {
-                    coordinateList.add(7);
-                    coordinateList.add(9);
-                }
-                case 3 -> {
-                    coordinateList.add(4);
-                    coordinateList.add(8);
-                }
-                case 4 -> {
-                    coordinateList.add(3);
-                    coordinateList.add(9);
-                    coordinateList.add(0);
-                }
-                case 6 -> {
-                    coordinateList.add(2);
-                    coordinateList.add(7);
-                    coordinateList.add(0);
-                }
-                case 7 -> {
-                    coordinateList.add(2);
-                    coordinateList.add(6);
-                }
-                case 8 -> {
-                    coordinateList.add(1);
-                    coordinateList.add(3);
-                }
-                case 9 -> {
-                    coordinateList.add(2);
-                    coordinateList.add(4);
-                }
-                case 0 -> {
-                    coordinateList.add(4);
-                    coordinateList.add(6);
-                }
-                default -> {
-                }
-            }
-
-            List<Integer> resultList = new ArrayList<>(coordinateList);
-
-            for (Integer number : coordinateList) {
-                resultList.addAll(possibleMoves(number, intNumberOfMoves - 1));
-            }
-
-            return resultList;
-        }
-    }
-
-
-
-    private static Board createBoard() {
-        Tail[] tails = {
-                new Tail(1, new Coordinate(0, 3)),
-                new Tail(2, new Coordinate(1, 3)),
-                new Tail(3, new Coordinate(2, 3)),
-                new Tail(4, new Coordinate(0, 2)),
-                new Tail(5, new Coordinate(1, 2)),
-                new Tail(6, new Coordinate(2, 2)),
-                new Tail(7, new Coordinate(0, 1)),
-                new Tail(8, new Coordinate(1, 1)),
-                new Tail(9, new Coordinate(2, 1)),
-                new Tail(0, new Coordinate(1, 0))
-        };
-        return new Board(tails);
-    }
-
-    private static void printBoard(Board board) {
-        for (int i = 3; i >= 0; i--) {
-            for (int j = 0; j <= 2; j++) {
-                if (board.getTail(new Coordinate(j, i)) == null) {
-                    System.out.print("X");
-                } else {
-                    System.out.print(board.getTail(new Coordinate(j, i)).getNumber());
-                }
-            }
-            System.out.println();
-        }
+        System.out.println("F(0,1) = " + numberOfPossibleMovements(0, 1)); // Expected: 2
+        System.out.println("F(1,1) = " + numberOfPossibleMovements(1, 1)); // Expected: 2
+        System.out.println("F(2,1) = " + numberOfPossibleMovements(2, 1)); // Expected: 2
+        System.out.println("F(3,1) = " + numberOfPossibleMovements(3, 1)); // Expected: 2
+        System.out.println("F(4,1) = " + numberOfPossibleMovements(4, 1)); // Expected: 3
+        System.out.println("F(5,1) = " + numberOfPossibleMovements(5, 1)); // Expected: 0
+        System.out.println("F(6,1) = " + numberOfPossibleMovements(6, 1)); // Expected: 3
+        System.out.println("F(7,1) = " + numberOfPossibleMovements(7, 1)); // Expected: 2
+        System.out.println("F(8,1) = " + numberOfPossibleMovements(8, 1)); // Expected: 2
+        System.out.println("F(9,1) = " + numberOfPossibleMovements(9, 1)); // Expected: 2
+        System.out.println("F(4,2) = " + numberOfPossibleMovements(4, 2)); // Expected: 6
+        System.out.println("F(4,3) = " + numberOfPossibleMovements(4, 3)); // Expected: 16
     }
 }
-
